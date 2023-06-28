@@ -1,7 +1,7 @@
 import socket
 
-IP = 'localhost'
-PORT = 1234
+IP = input("ip: ")
+PORT = int(input("port: "))
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((IP, PORT))
