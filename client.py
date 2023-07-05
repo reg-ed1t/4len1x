@@ -1,15 +1,29 @@
 import socket
 
-IP = input("ip: ")
-PORT = int(input("port: "))
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((IP, PORT))
+class Client:
+    def __init__(self, ip, port):
+        self.ip = ip
+        self.port = port
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.connect((self.ip, self.port))
 
-while True:
-    msg = input('Enter message ')
-    client.send(msg.encode())
-    data = client.recv(1024)
-    print(data.decode())
+    def run(self):
+        try:
+            while True:
+                message = input("Enter message ")
+                self.client.sendall(message.encode())
+                data = self.client.recv(1024)
+                print(data.decode())
+        except Exception as e:
+          print(e)
 
-client.close()
+def main():
+    ip = input("ip: ")
+    port = int(input("port: "))
+    client = Client(ip, port)
+    client.run()
+
+
+if __name__ == '__main__':
+    main()

@@ -2,44 +2,44 @@ import threading
 import datetime
 import socket
 
-IP = socket.gethostbyname(socket.gethostname())
-PORT = 1234
-def handle_client(conn, addr):
-    try:
-        print(f'[NEW CONNECTION] {addr} connected.')
 
-        connected = True
-        while connected:
-            msg = conn.recv(1024)
-            if msg == b'/exit':
-                connected = False
-            print(f'[{addr}] {msg.decode()}')
-            conn.send('Message received'.encode())
+class Server:
+    def __init__(self, ip, port):
+        self.ip = ip
+        self.port = port
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((self.ip, self.port))
+        self.server.listen()
+        print(f'[LISTENING] Server is listening on {self.ip}:{self.port}')
 
-        conn.close()
-    except Exception as e:
-        with open('log.txt', 'a') as file:
-            timestamp = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
-            file.write(f'[{timestamp}] Error: {str(e)}\n')
+    def handle_client(self, conn, addr):
+        try:
+            print(f'[NEW CONNECTION] {addr} connected.')
 
-def start():
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((IP, PORT))
-    server.listen()
-    print(f'[LISTENING] Server is listening on {IP}:{PORT}')
+            connected = True
+            while connected:
+                msg = conn.recv(1024)
+                print(f'[{addr}] {msg.decode()}')
+                conn.send('Message received'.encode())
 
-    while True:
-        conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-        print(f'[ACTIVE CONNECTIONS] {threading.activeCount() - 1}')
+            conn.close()
+        except Exception as e:
+            with open('log.txt', 'a') as file:
+                timestamp = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
+                file.write(f'[{timestamp}] Error: {str(e)}\n')
 
-def logc():
-    try:
-        with open("log.txt", 'x'):
-            print("Файл для логов успешно создан!")
-    except FileExistsError:
-        pass
-print('[STARTING] Server is starting...')
-logc()
-start()
+    def start(self):
+        while True:
+            conn, addr = self.server.accept()
+            thread = threading.Thread(target=self.handle_client, args=(conn, addr))
+            thread.start()
+            print(f'[ACTIVE CONNECTIONS] {threading.activeCount() - 1}')
+
+
+def main():
+    server = Server('localhost', 1234)
+    server.start()
+
+
+if __name__ == '__main__':
+    main()
