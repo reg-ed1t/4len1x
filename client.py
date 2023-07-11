@@ -7,11 +7,11 @@ class Client:
         self.port = port
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((self.ip, self.port))
-
+        self.nickname = input("Enter nickname ") + ":"
     def run(self):
         try:
             while True:
-                message = input("Enter message ")
+                message = self.nickname + input("Enter message ")
                 self.client.sendall(message.encode())
                 data = self.client.recv(1024)
                 print(data.decode())
