@@ -1,4 +1,6 @@
 import socket
+from colorama import just_fix_windows_console
+import termcolor
 
 
 class Client:
@@ -7,7 +9,10 @@ class Client:
         self.port = port
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((self.ip, self.port))
-        self.nickname = input("Enter nickname ") + ":"
+        self.nickName = input("Enter nickname ") + ":"
+        self.nickname = colored(self.nickName, nicknameColor.lower(), attrs=["bold"])
+        self.nicknameColor = input("Enter nickname color:  ")
+
     def run(self):
         try:
             while True:
@@ -16,7 +21,8 @@ class Client:
                 data = self.client.recv(1024)
                 print(data.decode())
         except Exception as e:
-          print(e)
+            print(e)
+
 
 def main():
     ip = input("ip: ")
@@ -25,5 +31,5 @@ def main():
     client.run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
