@@ -2,6 +2,7 @@ import socket
 from colorama import just_fix_windows_console
 import termcolor
 
+just_fix_windows_console()
 
 class Client:
     def __init__(self, ip, port):
